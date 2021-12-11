@@ -25,8 +25,8 @@ public class WorkingScheduleEntity implements Serializable{
 	@JoinColumn(name = "doctor_id")
 	private DoctorEntity doctor;
 	
-	@Column(name="date", nullable = false)
-	private Date date;
+	@Column(name="date", nullable = false, unique = true)
+	private String date;
 	
 	@Column(name = "from_hour", nullable = false)
 	private int fromHour;
@@ -37,7 +37,7 @@ public class WorkingScheduleEntity implements Serializable{
 	public WorkingScheduleEntity() {
 	}
 	
-	public WorkingScheduleEntity(DoctorEntity doctor, Date date, int fromHour, int toHour) {
+	public WorkingScheduleEntity(DoctorEntity doctor, String date, int fromHour, int toHour) {
 		this.doctor = doctor;
 		this.date = date;
 		this.fromHour = fromHour;
@@ -62,11 +62,11 @@ public class WorkingScheduleEntity implements Serializable{
 		this.doctor = doctor;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 

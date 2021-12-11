@@ -24,7 +24,7 @@ $usertype.on( "change", function() {
 });
 
 function initDatePickers() {
-    const $date = $("#date");
+    const $date = $("#search-date");
     $date.datepicker({
         minDate:0,
         dateFormat: 'dd/mm/yy'
@@ -82,7 +82,7 @@ $('#register').click(function(){
 			data: JSON.stringify(data)
 		},
 		success: function(data){
-			console.log(data);
+			clearForm();
 			window.location.href="index.html";
 			alert("Registration was successfull");
 		},
@@ -125,9 +125,17 @@ $('#login').click(function(){
 	});
 });
 
+function clearForm(){
+	$('#fullname').val(""); 
+	$('#email').val("");
+	$('#password').val("");
+	$('#repeatPassword').val("");
+	$('#age').val("");
+}
+
 // $('#add').click(function(){
 //     alert("add btn clicked");
 // });
-
+clearForm();
 initDatePickers();
 getDateRangeObject();
