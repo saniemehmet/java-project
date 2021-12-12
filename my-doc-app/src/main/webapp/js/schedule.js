@@ -118,6 +118,7 @@ $('#add-schedule').click(function(){
 			toHour: toHour
 		},
 		success: function(data){
+			$('#addNewScheduleModal').modal('hide');
 			getAllScheduleInfo();
 			clearForm();
 		},

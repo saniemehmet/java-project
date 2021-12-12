@@ -111,7 +111,7 @@ $('#login').click(function(){
 					window.location.href = "schedule.html";
 					break;
 				case "patient":
-					window.location.href = "profile.html";
+					window.location.href = "doctors.html";
 					break
 				default: 
 					alert("Invalid usertype has been detected!");
@@ -125,6 +125,21 @@ $('#login').click(function(){
 	});
 });
 
+$('#logout').on("click",function(){
+	$.ajax({
+		url:"logout",
+		method: "POST",
+		complete: function(data){
+			switch(data.status){
+				case 200: break;
+				case 401: alert("Authorization needed");break;
+				case 418: alert("Teapot alert!"); break;
+			}
+			window.location.href="index.html";
+		}
+	});
+})
+
 function clearForm(){
 	$('#fullname').val(""); 
 	$('#email').val("");
@@ -133,9 +148,6 @@ function clearForm(){
 	$('#age').val("");
 }
 
-// $('#add').click(function(){
-//     alert("add btn clicked");
-// });
 clearForm();
 initDatePickers();
 getDateRangeObject();

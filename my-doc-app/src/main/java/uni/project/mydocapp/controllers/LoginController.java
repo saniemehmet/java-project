@@ -61,15 +61,15 @@ public class LoginController {
 //			return new ResponseEntity<Integer>(-1, HttpStatus.UNAUTHORIZED);
 //		}
 //	}
-//	
-//	@PostMapping(path = "/logout")
-//	public ResponseEntity<Boolean> logout(HttpSession session){
-//		UserEntity user = (UserEntity) session.getAttribute("user");
-//		if(user != null) {
-//			session.invalidate();
-//			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-//		}else {
-//			return new ResponseEntity<Boolean>(false, HttpStatus.UNAUTHORIZED);
-//		}
-//	}
+	
+	@PostMapping(path = "/logout")
+	public ResponseEntity<Boolean> logout(HttpSession session){
+		UserEntity user = (UserEntity) session.getAttribute("user");
+		if(user != null) {
+			session.invalidate();
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}else {
+			return new ResponseEntity<Boolean>(false, HttpStatus.UNAUTHORIZED);
+		}
+	}
 }
