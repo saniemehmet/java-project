@@ -42,8 +42,74 @@ function getDoctorTemplate(doctor){
     $template.find('#template-doctor-overview').text(doctor.overview);
     $template.find('#template-doctor-contacts').text(doctor.contactDetails);
     $template.find('#book-appointment').click(function(){
-	    
+		$('#show-schedule').click(function(){
+			let doctorId = doctor.id;
+			let date = $('#appointment-date').val();
+			$.ajax({
+				url:"schedule/doctor/search",
+				method:"GET",
+				data:{
+					doctorId: doctorId,
+					date: date
+				},
+				success: function(data){
+					if(data.length != 0){
+						$('#appoitnment-select-div').attr('class','mt-3 row g-3 align-items-center');
+						$('#appointment-hour-select').empty();
+						for(let i=data.fromHour;i<data.toHour;i++){
+							$('#appointment-hour-select').append($('<option>', {
+							    value: i,
+							    text: (i<10?"0"+i+":00":i+":00")
+							}));
+						}
+						$('#request-appointment').removeAttr("disabled");
+					}else{
+						$('#appoitnment-select-div').attr('class','mt-3 row g-3 align-items-center d-none');
+						$('#appointment-hour-select').empty();
+						alert("Schedule not available yet!");
+					}
+					if(data == null){
+						$('#appoitnment-select-div').attr('class','mt-3 row g-3 align-items-center d-none');
+						$('#appointment-hour-select').empty();
+						alert("Schedule not available yet!");
+						clearModal();
+					}
+				},
+				fail: function(){
+					$('#appoitnment-select-div').attr('class','mt-3 row g-3 align-items-center d-none');
+					alert("Schedule search completed with fail!")
+				}
+			});
+		});
+		$('#request-appointment').click(function(){
+			console.log(doctor.id);
+			$.ajax({
+			url:"appointment/add",
+			method: "POST",
+			data:{
+				doctorId: doctor.id,
+				date: $('#appointment-date').val(),
+				hour: $('#appointment-hour-select').val(),
+				condition: $('#condition').val()
+			},
+			success: function(data){
+				clearModal();
+				if(data != null || data != ""){
+					alert("Appointment request has been sent successfully");
+				}
+				else{
+					alert("Data is null");
+				}
+			},
+			fail: function(){
+				alert("Appointment request failed!");
+			}
+			});
+		});
+		clearModal();
+		$('#request-appointment').attr('disabled', 'true');
 	});
+	
     return $template;
 }
 
@@ -93,6 +159,13 @@ $('#hide-search-doctors-results').click(function(){
 function clearSearchForm(){
 	$('#search-doctor-location').val("");
 	$('#search-doctor-specialty').val("");
+}
+
+function clearModal(){
+	$('#appointment-date').val("");
+	$('#appointment-hour-select').empty();
+	$('#condition').val();
+	
 }
 
 getAllDoctors();

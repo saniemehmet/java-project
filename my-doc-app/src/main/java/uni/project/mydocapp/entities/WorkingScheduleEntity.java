@@ -25,7 +25,7 @@ public class WorkingScheduleEntity implements Serializable{
 	@JoinColumn(name = "doctor_id")
 	private DoctorEntity doctor;
 	
-	@Column(name="date", nullable = false, unique = true)
+	@Column(name="date", nullable = false)
 	private String date;
 	
 	@Column(name = "from_hour", nullable = false)

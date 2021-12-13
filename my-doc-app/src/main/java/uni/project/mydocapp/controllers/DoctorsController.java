@@ -1,6 +1,8 @@
 package uni.project.mydocapp.controllers;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,14 +11,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uni.project.mydocapp.entities.DoctorEntity;
+import uni.project.mydocapp.entities.UserEntity;
+import uni.project.mydocapp.entities.WorkingScheduleEntity;
+import uni.project.mydocapp.repositories.ScheduleRepository;
 import uni.project.mydocapp.repositories.UserRepository;
 
 @RestController
-public class DoctorController {
+public class DoctorsController {
 	
 	private UserRepository userRepository;
-	public DoctorController(UserRepository userRepository) {
+	private ScheduleRepository scheduleRepository;
+	
+	public DoctorsController(UserRepository userRepository, ScheduleRepository scheduleRepository) {
 		this.userRepository = userRepository;
+		this.scheduleRepository = scheduleRepository;
 	}
 	
 	@GetMapping(path = "/doctors/all")
@@ -44,6 +52,24 @@ public class DoctorController {
 			return userRepository.findAllByUserTypeAndLocationIgnoreCaseContaining("doctor", location);
 		}else if(specialty!="") {
 			return userRepository.findAllByUserTypeAndSpecialtiesIgnoreCaseContaining("doctor", specialty);
+		}
+		return null;
+	}
+	
+	@GetMapping(path = "schedule/doctor/search")
+	public WorkingScheduleEntity getDoctorSchedule(@RequestParam(value = "doctorId") int doctorId, @RequestParam(value = "date") String date){
+		Optional<UserEntity> optionalUser = userRepository.findById(doctorId);
+		if(optionalUser.isPresent()) {
+			DoctorEntity doctor = (DoctorEntity) optionalUser.get();
+			if(doctor != null) {
+				Optional<WorkingScheduleEntity> optionalSchedule = scheduleRepository.findByDoctorAndDate(doctor, date);
+				if(optionalSchedule.isPresent()) {
+					return optionalSchedule.get();
+				}else {
+					return null;
+				}
+//				return scheduleRepository.findByDateAndDoctor(date, doctor).get(0);
+			}
 		}
 		return null;
 	}

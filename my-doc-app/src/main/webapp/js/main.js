@@ -37,6 +37,13 @@ function initDatePickers() {
         dateFormat: 'dd/mm/yy'
     });
     $scheduleDate.datepicker('setDate', new Date());
+
+	const $appointmentDate = $('#appointment-date');
+    $appointmentDate.datepicker({
+        minDate:0,
+        dateFormat: 'dd/mm/yy'
+    });
+    $appointmentDate.datepicker('setDate', new Date());
 }
 
 function getDateRangeObject() {

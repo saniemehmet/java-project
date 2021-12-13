@@ -42,9 +42,10 @@ public class ScheduleController {
 							  @RequestParam(value = "fromHour") int fromHour,
 							  @RequestParam(value = "toHour") int toHour, HttpSession session) {
 		DoctorEntity doctor = (DoctorEntity) session.getAttribute("user");
-		if(doctor != null && !scheduleExists(date)) {
+		if(doctor != null) {
 			WorkingScheduleEntity schedule = new WorkingScheduleEntity(doctor, date, fromHour, toHour);
 			return scheduleRepository.saveAndFlush(schedule);
+//			 && !scheduleExists(date)
 		}
 		return null;
 	}
@@ -98,11 +99,12 @@ public class ScheduleController {
 		return null;
 	}
 	
-	public boolean scheduleExists(String date){
-		Optional<WorkingScheduleEntity> optionalSchedule = scheduleRepository.findByDate(date);
-		if(optionalSchedule.isPresent()) {
-			return true;
-		}
-		return false;
-	}
+//	
+//	public boolean scheduleExists(String date){
+//		Optional<WorkingScheduleEntity> optionalSchedule = scheduleRepository.findByDate(date);
+//		if(optionalSchedule.isPresent()) {
+//			return true;
+//		}
+//		return false;
+//	}
 }
