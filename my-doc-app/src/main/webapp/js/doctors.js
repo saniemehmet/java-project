@@ -1,5 +1,6 @@
 let doctors = []
 let searchDoctorsList = []
+let appointmentExists=false;
 
 function renderDoctorsList(){
     $doctorsList = $('#doctors-list');
@@ -54,19 +55,45 @@ function getDoctorTemplate(doctor){
 				},
 				success: function(data){
 					if(data.length != 0){
-						$('#appoitnment-select-div').attr('class','mt-3 row g-3 align-items-center');
-						$('#appointment-hour-select').empty();
-						for(let i=data.fromHour;i<data.toHour;i++){
-							$('#appointment-hour-select').append($('<option>', {
-							    value: i,
-							    text: (i<10?"0"+i+":00":i+":00")
-							}));
-						}
-						$('#request-appointment').removeAttr("disabled");
+						$.ajax({
+							url:"appointment/find/reserved",
+							method:"GET",
+							data:{
+								doctorId:doctorId,
+								date:date
+							},
+							success: function(reservedHours){
+								if(reservedHours!=null){
+									$('#appoitnment-select-div').attr('class','mt-3 row g-3 align-items-center');
+									$('#appointment-hour-select').empty();
+									for(let i=data.fromHour;i<data.toHour;i++){
+										if(!reservedHours.includes(i)){
+											$('#appointment-hour-select').append($('<option>', {
+										    value: i,
+										    text: (i<10?"0"+i+":00":i+":00")
+											}));	
+										}
+									}
+									$('#request-appointment').removeAttr("disabled");
+								}else{
+									$('#appoitnment-select-div').attr('class','mt-3 row g-3 align-items-center');
+									$('#appointment-hour-select').empty();
+									for(let i=data.fromHour;i<data.toHour;i++){
+										$('#appointment-hour-select').append($('<option>', {
+										    value: i,
+										    text: (i<10?"0"+i+":00":i+":00")
+										}));
+									}
+									$('#request-appointment').removeAttr("disabled");	
+								}
+							},fail:function(){
+								
+							}
+						});
 					}else{
 						$('#appoitnment-select-div').attr('class','mt-3 row g-3 align-items-center d-none');
 						$('#appointment-hour-select').empty();
-						alert("Schedule not available yet!");
+						alert("Please select a valid date!");
 					}
 					if(data == null){
 						$('#appoitnment-select-div').attr('class','mt-3 row g-3 align-items-center d-none');
@@ -82,29 +109,33 @@ function getDoctorTemplate(doctor){
 			});
 		});
 		$('#request-appointment').click(function(){
-			console.log(doctor.id);
-			$.ajax({
-			url:"appointment/add",
-			method: "POST",
-			data:{
-				doctorId: doctor.id,
-				date: $('#appointment-date').val(),
-				hour: $('#appointment-hour-select').val(),
-				condition: $('#condition').val()
-			},
-			success: function(data){
-				clearModal();
-				if(data != null || data != ""){
-					alert("Appointment request has been sent successfully");
-				}
-				else{
-					alert("Data is null");
-				}
-			},
-			fail: function(){
-				alert("Appointment request failed!");
+			ifAppointmentExists($('#appointment-date').val());
+			console.log(appointmentExists);
+			if(!ifExists){
+				$.ajax({
+					url:"appointment/add",
+					method: "POST",
+					data:{
+						doctorId: doctor.id,
+						date: $('#appointment-date').val(),
+						hour: $('#appointment-hour-select').val(),
+						condition: $('#condition').val()
+					},
+					success: function(data){
+						clearModal();
+						$('#bookAppointmentModal').modal('hide');
+						if(data != null || data != ""){
+							alert("Appointment request has been sent successfully");
+						}
+						else{
+							alert("Data is null");
+						}
+					},
+					fail: function(){
+						alert("Appointment request failed!");
+					}
+				});	
 			}
-			});
 		});
 		clearModal();
 		$('#request-appointment').attr('disabled', 'true');
@@ -155,6 +186,30 @@ $('#hide-search-doctors-results').click(function(){
 	$('#hide-search-doctors-results').attr('class', 'btn btn-primary w-25 d-inline d-none');
 	clearSearchForm();
 });
+
+function ifAppointmentExists(date){
+	appointmentExists = false;
+	$.ajax({
+		url:"appointment/find",
+		method: "GET",
+		data:{
+			date:date
+		},
+		success: function(data){
+			if(data.length != 0){
+				alert("You already have an appointment on "+date+" at "+(data.hour<10?"0"+data.hour+":00":data.hour+":00"));
+				clearModal();
+				appointmentExists = true;
+			}
+			else{
+				appointmentExists = false;
+			}
+		},
+		fail: function(){
+			appointmentExists = false;
+		}
+	});
+}
 
 function clearSearchForm(){
 	$('#search-doctor-location').val("");

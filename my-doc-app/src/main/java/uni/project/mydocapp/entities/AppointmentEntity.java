@@ -42,12 +42,13 @@ public class AppointmentEntity implements Serializable{
 	public AppointmentEntity() {
 	}
 	
-	public AppointmentEntity(UserEntity doctor, UserEntity patient, String date, int hour, String reason) {
+	public AppointmentEntity(UserEntity doctor, UserEntity patient, String date, int hour, String reason, String status) {
 		this.doctor = doctor;
 		this.patient = patient;
 		this.date = date;
 		this.hour = hour;
 		this.reason = reason;
+		this.status = status;
 	}
 
 	public int getId() {
