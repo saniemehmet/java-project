@@ -69,6 +69,18 @@ public class UserEntity implements Serializable{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
 
 	public String getPassword() {
 		return password;

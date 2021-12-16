@@ -52,15 +52,23 @@ public class LoginController {
 		return null;
 	}
 	
-//	@GetMapping(path = "/loggedUserId")
-//	public ResponseEntity<Integer> loggedUserOd(HttpSession session){
-//		UserEntity user = (UserEntity) session.getAttribute("user");
-//		if(user != null) {
-//			return new ResponseEntity<Integer>(user.getId(), HttpStatus.OK);
-//		}else {
-//			return new ResponseEntity<Integer>(-1, HttpStatus.UNAUTHORIZED);
-//		}
-//	}
+	@GetMapping(path = "/loggedUser")
+	public UserEntity loggedUser(HttpSession session){
+		UserEntity user = (UserEntity) session.getAttribute("user");
+		if(user != null) {
+			return user;
+		}
+		return null;
+	}
+	
+	@GetMapping(path = "/loggedUserType")
+	public String getLoggedUserType(HttpSession session) {
+		UserEntity user = (UserEntity) session.getAttribute("user");
+		if(user != null) {
+			return user.getUserType().toLowerCase();
+		}
+		return null;
+	}
 	
 	@PostMapping(path = "/logout")
 	public ResponseEntity<Boolean> logout(HttpSession session){
@@ -71,5 +79,30 @@ public class LoginController {
 		}else {
 			return new ResponseEntity<Boolean>(false, HttpStatus.UNAUTHORIZED);
 		}
+	}
+	
+	@PostMapping(path = "/profile/edit")
+	public UserEntity editUserInfo(@RequestParam(value = "profileInfo") String profileInfo, HttpSession session) {
+		UserEntity user = (UserEntity) session.getAttribute("user");
+		JSONObject data = new JSONObject(profileInfo);
+		if(user != null) {
+			if(data.getString("password").equals(data.getString("repeatPassword"))) {
+				user.setName(data.getString("name"));
+				user.setEmail(data.getString("email"));
+				user.setPassword(data.getString("password"));
+				user.setAge(data.getInt("age"));
+				if(user.getUserType().equalsIgnoreCase("doctor")) {
+					DoctorEntity doctor = (DoctorEntity) user;
+					doctor.setSpecialties(data.getString("specialties"));
+					doctor.setLocation(data.getString("location"));
+					doctor.setExperience(data.getInt("experience"));
+					doctor.setOverview(data.getString("overview"));
+					doctor.setContactDetails(data.getString("contactDetails"));
+					return userRepository.save(doctor);
+				}
+				return userRepository.save(user);
+			}
+		}
+		return null;
 	}
 }

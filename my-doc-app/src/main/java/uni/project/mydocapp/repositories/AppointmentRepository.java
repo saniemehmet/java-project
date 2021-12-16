@@ -15,5 +15,12 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
 	List<AppointmentEntity> findByDoctorAndDate(UserEntity doctor, String date);
 
 	Optional<AppointmentEntity> findByPatientAndDate(UserEntity patient, String date);
+
+	List<AppointmentEntity> findAllByPatient(UserEntity user);
+
+	List<AppointmentEntity> findAllByDoctor(UserEntity user);
+
+	Optional<AppointmentEntity> findByDoctorAndPatientAndDate(UserEntity user, UserEntity patient, String date);
+
 	
 }

@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uni.project.mydocapp.comparators.ScheduleDateComparator;
 import uni.project.mydocapp.entities.DoctorEntity;
-import uni.project.mydocapp.entities.WorkingScheduleEntity;
+import uni.project.mydocapp.entities.ScheduleEntity;
 import uni.project.mydocapp.repositories.ScheduleRepository;
 
 @RestController
@@ -27,10 +28,10 @@ public class ScheduleController {
 	}
 	
 	@GetMapping(path = "/schedule")
-	public List<WorkingScheduleEntity> getAllWorkingSchedule(HttpSession session){
+	public List<ScheduleEntity> getAllWorkingSchedule(HttpSession session){
 		DoctorEntity doctor = (DoctorEntity) session.getAttribute("user");
 		if(doctor != null) {
-			List<WorkingScheduleEntity> allSchedules = scheduleRepository.findAllByDoctor(doctor);
+			List<ScheduleEntity> allSchedules = scheduleRepository.findAllByDoctor(doctor);
 			Collections.sort(allSchedules, new ScheduleDateComparator());
 			return allSchedules;
 		}
@@ -38,26 +39,26 @@ public class ScheduleController {
 	}
 	
 	@PostMapping(path = "/schedule/add")
-	public WorkingScheduleEntity addSchedule(@RequestParam(value = "date") String date,
+	public ScheduleEntity addSchedule(@RequestParam(value = "date") String date,
 							  @RequestParam(value = "fromHour") int fromHour,
 							  @RequestParam(value = "toHour") int toHour, HttpSession session) {
 		DoctorEntity doctor = (DoctorEntity) session.getAttribute("user");
-		if(doctor != null) {
-			WorkingScheduleEntity schedule = new WorkingScheduleEntity(doctor, date, fromHour, toHour);
+		List<ScheduleEntity> existing = getAllWorkingSchedule(date, session);
+		if(doctor != null && (existing.size() == 0 || existing == null)) {
+			ScheduleEntity schedule = new ScheduleEntity(doctor, date, fromHour, toHour);
 			return scheduleRepository.saveAndFlush(schedule);
-//			 && !scheduleExists(date)
 		}
 		return null;
 	}
 	
 	@PostMapping(path = "/schedule/edit")
-	public WorkingScheduleEntity editSchedule(@RequestParam(value = "date") String date,
+	public ScheduleEntity editSchedule(@RequestParam(value = "date") String date,
 							  				  @RequestParam(value = "fromHour") int fromHour,
 							  				  @RequestParam(value = "toHour") int toHour, HttpSession session) {
 		DoctorEntity doctor = (DoctorEntity) session.getAttribute("user");
-		Optional<WorkingScheduleEntity> optionalSchedule = scheduleRepository.findByDate(date);
+		Optional<ScheduleEntity> optionalSchedule = scheduleRepository.findByDoctorAndDate(doctor, date);
 		if(optionalSchedule.isPresent()) {
-			WorkingScheduleEntity schedule = optionalSchedule.get();
+			ScheduleEntity schedule = optionalSchedule.get();
 			if(schedule.getDoctor().getId() == doctor.getId()) {
 				schedule.setDate(date);
 				schedule.setFromHour(fromHour);
@@ -74,9 +75,9 @@ public class ScheduleController {
 		if(doctor == null) {
 			return new ResponseEntity<Boolean>(false, HttpStatus.UNAUTHORIZED);
 		}
-		Optional<WorkingScheduleEntity> optionalSchedule = scheduleRepository.findById(id);
+		Optional<ScheduleEntity> optionalSchedule = scheduleRepository.findById(id);
 		if(optionalSchedule.isPresent()) {
-			WorkingScheduleEntity schedule = optionalSchedule.get();
+			ScheduleEntity schedule = optionalSchedule.get();
 			if(schedule.getDoctor().getId() == doctor.getId()) {
 				scheduleRepository.delete(schedule);
 				return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -89,22 +90,14 @@ public class ScheduleController {
 	}
 	
 	@GetMapping(path = "schedule/search")
-	public List<WorkingScheduleEntity> getAllWorkingSchedule(@RequestParam(value = "date") String date, HttpSession session){
+	public List<ScheduleEntity> getAllWorkingSchedule(@RequestParam(value = "date") String date, HttpSession session){
 		DoctorEntity doctor = (DoctorEntity) session.getAttribute("user");
 		if(doctor != null) {
-			List<WorkingScheduleEntity> allSchedules = scheduleRepository.findByDateAndDoctor(date, doctor);
+			List<ScheduleEntity> allSchedules = scheduleRepository.findByDateAndDoctor(date, doctor);
 			Collections.sort(allSchedules, new ScheduleDateComparator());
 			return allSchedules;
 		}
 		return null;
 	}
 	
-//	
-//	public boolean scheduleExists(String date){
-//		Optional<WorkingScheduleEntity> optionalSchedule = scheduleRepository.findByDate(date);
-//		if(optionalSchedule.isPresent()) {
-//			return true;
-//		}
-//		return false;
-//	}
 }

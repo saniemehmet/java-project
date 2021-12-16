@@ -1,5 +1,7 @@
 let schedule = []
 let searchSchedule = []
+let userId= -1;
+
 function renderScheduleList(){
     $scheduleList = $('#working-schedule-list');
     $scheduleList.empty();
@@ -17,40 +19,56 @@ function renderScheduleList(){
 function getScheduleTemplate(item){
     const $template = $($('#schedule-template').html());
     $template.find('#result-date').text(item.date);
+	if(item.date == moment(new Date()).format("DD/MM/YYYY")){
+		$template.find('#result-date').attr('class','card-header bg-info');
+	}
     $template.find('#from-hour').text(item.fromHour);
     $template.find('#to-hour').text(item.toHour);
     $template.find('#edit-schedule').click(function(){
-	    $('#edit-date').val(item.date);
-	    $('#edit-from').val(item.fromHour);
-	    $('#edit-to').val(item.toHour);
-		$('#edit-schedule-modal-btn').click(function(){
-			console.log("edit-date",$('#edit-date').val());
-			console.log("edit-from",$('#edit-from').val());
-			console.log("edit-to",$('#edit-to').val());
-			$.ajax({
-				url:"schedule/edit",
-				method:"POST",
-				data:{
-					date: $('#edit-date').val(),
-					fromHour: $('#edit-from').val(),
-					toHour: $('#edit-to').val()
-				},
-				success: function(data){
-					console.log(data);
-					if(data != null){
-						getAllScheduleInfo();
-						$searchList = $('#search-schedule-list');
-    					$searchList.empty();
-						$("#editScheduleModal").modal('hide');
-					}else{
-						alert("Try again later");
-					}
-				},
-				fail:function(){
-					alert("Edit schedule failed");
+		$.ajax({
+			url:"appointment/find/reserved",
+			method:"GET",
+			data:{
+				doctorId: userId,
+				date: item.date
+			},
+			success: function(reservedHours){
+				if(reservedHours.length != 0){
+					alert("Shedule cannot be changed due to approved/pending appointments!")
+				}else{
+					$('#edit-date').val(item.date);
+				    $('#edit-from').val(item.fromHour);
+				    $('#edit-to').val(item.toHour);
+					$('#edit-schedule-modal-btn').click(function(){
+						$.ajax({
+							url:"schedule/edit",
+							method:"POST",
+							data:{
+								date: $('#edit-date').val(),
+								fromHour: $('#edit-from').val(),
+								toHour: $('#edit-to').val()
+							},
+							success: function(data){
+								if(data != null){
+									getAllScheduleInfo();
+									$searchList = $('#search-schedule-list');
+			    					$searchList.empty();
+									$("#editScheduleModal").modal('hide');
+								}else{
+									alert("Try again later");
+								}
+							},
+							fail:function(){
+								alert("Edit schedule failed");
+							}
+						});
+					});
 				}
-			});
+			},fail:function(){
+				
+			}
 		});
+	    
 	});
     $template.find('#remove-schedule').click(function(){
 		let id = item.id;
@@ -118,9 +136,13 @@ $('#add-schedule').click(function(){
 			toHour: toHour
 		},
 		success: function(data){
-			$('#addNewScheduleModal').modal('hide');
-			getAllScheduleInfo();
-			clearForm();
+			if(Object.keys(data).length!=0){
+				$('#addNewScheduleModal').modal('hide');
+				getAllScheduleInfo();
+				clearForm();	
+			}else{
+				alert("Schedule exists");
+			}
 		},
 		fail: function(){
 			alert("Request cannot be executed");
@@ -165,4 +187,28 @@ function clearForm(){
     $('#schedule-to').val("");
 }
 
-getAllScheduleInfo();
+$.ajax({
+	url: "loggedUserType",
+	method: "GET",
+	success: function(type){
+		if(type == "doctor"){
+			getAllScheduleInfo();
+		}
+	},
+	fail: function(){
+		alert("Schedule info not available");
+	}
+});
+
+$.ajax({
+	url:"loggedUser",
+	method:"GET",
+	success: function(data){
+		if(Object.keys(data).length!=0){
+			userId = data.id;	
+		}
+	},
+	fail: function(){
+		alert("Profile info not found!");
+	}
+});

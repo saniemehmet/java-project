@@ -4,6 +4,37 @@ $(document).ready(function() {
     $(".doctor-location").hide();
     $(".doctor-overview").hide();
     $(".doctor-contacts").hide();
+
+	$.ajax({
+		url: "loggedUserType",
+		method: "GET",
+		success: function(type){
+			if(type == "doctor"){
+				$('#doctors-nav-link').hide();
+				$('#schedule-nav-link').show();
+			
+				$("#profile-specialties-list").attr('class','col-12');
+				$("#profile-location-list").attr('class','col-10');
+				$("#profile-experience-list").attr('class','col-md-2');
+				$("#profile-description-list").attr('class','col-md-12');
+				$("#profile-contact-list").attr('class','col-md-12');
+			}else if(type == "patient"){
+				$('#doctors-nav-link').show();
+				$('#schedule-nav-link').hide();
+				
+				$("#profile-specialties-list").attr('class','col-12 d-none');
+				$("#profile-location-list").attr('class','col-10 d-none');
+				$("#profile-experience-list").attr('class','col-md-2 d-none');
+				$("#profile-description-list").attr('class','col-md-12 d-none');
+				$("#profile-contact-list").attr('class','col-md-12 d-none');
+			}else{
+				
+			}
+		},
+		fail: function(){
+			alert("User type not resolved");
+		}
+	});
 });
 
 var $usertype = $( "input:radio[name=userType]" );
@@ -14,7 +45,9 @@ $usertype.on( "change", function() {
         $(".doctor-location").show();
         $(".doctor-overview").show();
         $(".doctor-contacts").show();
+		
     }else{
+	console.log("user");
         $(".doctor-specialties").hide();
         $(".doctor-experience").hide();
         $(".doctor-location").hide();
@@ -134,7 +167,7 @@ $('#login').click(function(){
 
 $('#logout').on("click",function(){
 	$.ajax({
-		url:"logout",
+		url: "logout",
 		method: "POST",
 		complete: function(data){
 			switch(data.status){

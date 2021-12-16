@@ -7,19 +7,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import uni.project.mydocapp.entities.DoctorEntity;
-import uni.project.mydocapp.entities.WorkingScheduleEntity;
+import uni.project.mydocapp.entities.ScheduleEntity;
 
 @Repository
-public interface ScheduleRepository extends JpaRepository<WorkingScheduleEntity, Integer> {
+public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Integer> {
 
-	List<WorkingScheduleEntity> findAllByDoctor(DoctorEntity doctor);
+	List<ScheduleEntity> findAllByDoctor(DoctorEntity doctor);
 
-	Optional<WorkingScheduleEntity> findByDate(String date);
+	Optional<ScheduleEntity> findByDate(String date);
 
-	List<WorkingScheduleEntity> findByDateAndDoctor(String date, DoctorEntity doctor);
+	List<ScheduleEntity> findByDateAndDoctor(String date, DoctorEntity doctor);
 
-	List<WorkingScheduleEntity> findByIdAndDate(int id, String date);
+	List<ScheduleEntity> findByIdAndDate(int id, String date);
 
-	Optional<WorkingScheduleEntity> findByDoctorAndDate(DoctorEntity doctor, String date);
+	Optional<ScheduleEntity> findByDoctorAndDate(DoctorEntity doctor, String date);
 
 }

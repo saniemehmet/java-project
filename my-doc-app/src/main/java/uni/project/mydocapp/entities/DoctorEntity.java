@@ -31,7 +31,7 @@ public class DoctorEntity extends UserEntity{
 	private String contactDetails;
 	
 	@OneToMany(mappedBy = "doctor", fetch = FetchType.EAGER)
-	private List<WorkingScheduleEntity> schedule;
+	private List<ScheduleEntity> schedule;
 	
 	public DoctorEntity() {
 		
@@ -86,11 +86,11 @@ public class DoctorEntity extends UserEntity{
 		this.contactDetails = contactDetails;
 	}
 
-	public List<WorkingScheduleEntity> getSchedule() {
+	public List<ScheduleEntity> getSchedule() {
 		return schedule;
 	}
 
-	public void setSchedule(List<WorkingScheduleEntity> schedule) {
+	public void setSchedule(List<ScheduleEntity> schedule) {
 		this.schedule = schedule;
 	}
 }

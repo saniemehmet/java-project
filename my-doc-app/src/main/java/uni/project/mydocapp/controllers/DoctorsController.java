@@ -1,6 +1,5 @@
 package uni.project.mydocapp.controllers;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import uni.project.mydocapp.entities.DoctorEntity;
 import uni.project.mydocapp.entities.UserEntity;
-import uni.project.mydocapp.entities.WorkingScheduleEntity;
+import uni.project.mydocapp.entities.ScheduleEntity;
 import uni.project.mydocapp.repositories.ScheduleRepository;
 import uni.project.mydocapp.repositories.UserRepository;
 
@@ -56,19 +55,18 @@ public class DoctorsController {
 		return null;
 	}
 	
-	@GetMapping(path = "schedule/doctor/search")
-	public WorkingScheduleEntity getDoctorSchedule(@RequestParam(value = "doctorId") int doctorId, @RequestParam(value = "date") String date){
+	@GetMapping(path = "/schedule/doctor/search")
+	public ScheduleEntity getDoctorSchedule(@RequestParam(value = "doctorId") int doctorId, @RequestParam(value = "date") String date){
 		Optional<UserEntity> optionalUser = userRepository.findById(doctorId);
 		if(optionalUser.isPresent()) {
 			DoctorEntity doctor = (DoctorEntity) optionalUser.get();
 			if(doctor != null) {
-				Optional<WorkingScheduleEntity> optionalSchedule = scheduleRepository.findByDoctorAndDate(doctor, date);
+				Optional<ScheduleEntity> optionalSchedule = scheduleRepository.findByDoctorAndDate(doctor, date);
 				if(optionalSchedule.isPresent()) {
 					return optionalSchedule.get();
 				}else {
 					return null;
 				}
-//				return scheduleRepository.findByDateAndDoctor(date, doctor).get(0);
 			}
 		}
 		return null;

@@ -19,20 +19,23 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                  <a class="nav-link" aria-current="page" href="schedule.html">Schedule</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="patients.html" active>Patients</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link active" href="profile.html" active>Profile</a>
-                </li>
-              </ul>
-              <span class="navbar-text">
-                <a class="nav-link d-inline" href="#" id="logout">Logout</a>
-              </span>
+             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" id="doctors-nav-link" aria-current="page" href="doctors.html">Doctors</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="schedule-nav-link" aria-current="page" href="schedule.html">Schedule</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="appointments.html">Appointments</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="profile.html">Profile</a>
+              </li>
+            </ul>
+            <span class="navbar-text">
+              <a class="nav-link" href="#" id="logout">Logout</a>
+            </span>
           </div>
         </div>
     </nav>
@@ -46,39 +49,42 @@
           <label for="profile-email" class="form-label">Email</label>
           <input type="email" class="form-control" id="profile-email">
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
           <label for="profile-password" class="form-label">Password</label>
           <input type="password" class="form-control" id="profile-password">
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
           <label for="profile-repeat-password" class="form-label">Repeat password</label>
           <input type="password" class="form-control" id="profile-repeat-password">
         </div>
-        
-        <div class="col-12">
-          <label for="specialties" class="form-label">Specialties</label>
-          <input type="text" class="form-control" id="specialties" placeholder="Specialties">
+        <div class="col-md-2">
+          <label for="profile-age" class="form-label">Age</label>
+          <input type="number" min="1" class="form-control" id="profile-age">
         </div>
-        <div class="col-10">
+        <div id="profile-specialties-list" class="col-12">
+          <label for="profile-specialties" class="form-label">Specialties</label>
+          <input type="text" class="form-control" id="profile-specialties" placeholder="Specialties">
+        </div>
+        <div id="profile-location-list" class="col-10">
           <label for="profile-location" class="form-label">Location</label>
           <input type="text" class="form-control" id="profile-location" placeholder="Location">
         </div>
-        <div class="col-md-2">
-          <label for="experience" class="form-label">Experience</label>
-          <input type="number" min="1" class="form-control" id="experience">
+        <div id="profile-experience-list" class="col-md-2">
+          <label for="profile-experience" class="form-label">Experience</label>
+          <input type="number" min="1" class="form-control" id="profile-experience">
         </div>
-        <div class="col-md-12">
+        <div id="profile-description-list" class="col-md-12">
           <label for="profile-description" class="form-label">Overview</label>
           <textarea class="form-control" id="profile-description" name="profile-description" placeholder="Overview"></textarea>
         </div>
-        <div class="col-md-12">
+        <div id="profile-contact-list" class="col-md-12">
           <label for="profile-contact-details" class="form-label">Contact details</label>
           <textarea class="form-control" id="profile-contact-details" name="profile-contact-details">
 
           </textarea>
         </div>
         <div class="d-flex justify-content-center">
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button id="save-profile-info" type="click" class="btn btn-primary">Save</button>
         </div>
       </form>
     </div>
@@ -90,5 +96,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js"></script>
 
     <script src="js/main.js"></script>
+    <script src="js/profile.js"></script>
   </body>
 </html>

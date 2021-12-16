@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "working_schedule")
-public class WorkingScheduleEntity implements Serializable{
+public class ScheduleEntity implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,10 +34,10 @@ public class WorkingScheduleEntity implements Serializable{
 	@Column(name = "to_hour", nullable = false)
 	private int toHour;
 	
-	public WorkingScheduleEntity() {
+	public ScheduleEntity() {
 	}
 	
-	public WorkingScheduleEntity(DoctorEntity doctor, String date, int fromHour, int toHour) {
+	public ScheduleEntity(DoctorEntity doctor, String date, int fromHour, int toHour) {
 		this.doctor = doctor;
 		this.date = date;
 		this.fromHour = fromHour;
